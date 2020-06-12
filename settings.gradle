@@ -1,1 +1,4 @@
 rootProject.name = 'clientservice'
+include 'gateway'
+include 'client'
+
