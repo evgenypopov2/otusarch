@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: cache-deployment
+spec:
+    replicas: 1
+    selector:
+       matchLabels:
+          app: cache-app
+    template:
+       metadata:
+          labels:
+             app: cache-app
+       spec:
+          containers:
+          - name: cache-app
+            image: otusarchitectpopov/hw01:cacheservice
+            imagePullPolicy: Always
+            ports:
+              - containerPort: 8000
+            envFrom:
+            - configMapRef:
+                name: config-map
+            - secretRef:
+                name: secret
