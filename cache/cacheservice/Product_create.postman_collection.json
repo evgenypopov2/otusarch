@@ -41,6 +41,7 @@
 						"arch",
 						"homework"
 					],
+					"port": "32115",
 					"path": [
 						"product"
 					]

@@ -16,7 +16,7 @@
             <ttl unit="minutes">10</ttl>
             <!--<tti unit="minutes">10</tti>-->
         </expiry>
-        <listeners>
+        <!--<listeners>
             <listener>
                 <class>ru.otus.product.CacheLogger</class>
                 <event-firing-mode>ASYNCHRONOUS</event-firing-mode>
@@ -27,9 +27,9 @@
                 <events-to-fire-on>UPDATED</events-to-fire-on>
                 <events-to-fire-on>REMOVED</events-to-fire-on>
             </listener>
-        </listeners>
+        </listeners>-->
         <resources>
-            <heap unit="entries">100</heap>
+            <heap unit="entries">1000</heap>
         </resources>
     </cache-template>
 

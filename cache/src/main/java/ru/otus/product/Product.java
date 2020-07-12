@@ -11,7 +11,6 @@ public class Product implements Serializable {
     @GeneratedValue(strategy= GenerationType.SEQUENCE, generator = "product_generator")
     @SequenceGenerator(name = "product_generator", sequenceName = "product_id_seq", allocationSize = 1)
     private long id;
-//    private UUID id = UUID.randomUUID();
     private String name;
     private String category;
     private double price;

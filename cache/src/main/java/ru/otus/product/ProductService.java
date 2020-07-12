@@ -2,7 +2,9 @@ package ru.otus.product;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -24,23 +26,17 @@ public class ProductService {
     }
 
     @Cacheable(value = "productCache", key = "#id")
-    public Optional<Product> findById(long id) throws InterruptedException {
-        log.info("get product with id={}", id);
-        Thread.sleep(20);
+    public Optional<Product> findById(long id) {
         return productRepository.findById(id);
     }
 
-    //@CachePut(value = "productCache", key = "#product.id")
+    @CachePut(value = "productCache", key = "#product.id")
     public Product save(Product product) {
-        log.info("save product {}", product.toString());
-        //Thread.sleep(20);
         return productRepository.save(product);
     }
 
     @CacheEvict(value = "productCache", key = "#id")
     public void deleteById(long id) {
-        log.info("delete product with id={}", id);
-        //Thread.sleep(20);
         productRepository.deleteById(id);
     }
 }
