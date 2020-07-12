@@ -22,5 +22,5 @@ metrics:
 ingress:
   enabled: true
   hosts:
-    - host: hello.world
-      paths: ["/app"]
+    - host: arch.homework
+      paths: ["/"]

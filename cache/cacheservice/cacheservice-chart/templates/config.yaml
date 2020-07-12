@@ -8,7 +8,7 @@ data:
   spring.jpa.database-platform: "org.hibernate.dialect.PostgreSQLDialect"
   spring.jpa.hibernate.ddl-auto: "update"
   spring.jpa.properties.hibernate.jdbc.lob.non_contextual_creation: "true"
-  spring.cache.type: "jcache"
+  spring.cache.type: "none"
   spring.cache.jcache.config: "classpath:ehcache.xml"
   spring.cache.jcache.provider: "org.ehcache.jsr107.EhcacheCachingProvider"
 ---
