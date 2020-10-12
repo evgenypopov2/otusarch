@@ -1,0 +1,53 @@
+{
+	"info": {
+		"_postman_id": "0b2fc860-2855-45f6-8d30-340cc91e62eb",
+		"name": "Product create",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "create product",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "fedb342b-756c-4b88-ab83-7427c760c465",
+						"exec": [
+							"pm.collectionVariables.set(\"name\", pm.variables.replaceIn('{{$randomProduct}}'))",
+							"pm.collectionVariables.set(\"category\", pm.variables.replaceIn('{{$randomDepartment}}'))",
+							"pm.collectionVariables.set(\"price\", pm.variables.replaceIn('{{$randomPrice}}'))",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\":\"{{$randomProduct}}\",\n    \"category\":\"{{$randomDepartment}}\",\n    \"price\":{{$randomPrice}}\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://arch.homework/product",
+					"protocol": "http",
+					"host": [
+						"arch",
+						"homework"
+					],
+					"path": [
+						"product"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"protocolProfileBehavior": {}
+}

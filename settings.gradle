@@ -1,1 +1,5 @@
-rootProject.name = 'healthservice'
+rootProject.name = 'clientservice'
+include 'gateway'
+include 'client'
+include 'cache'
+

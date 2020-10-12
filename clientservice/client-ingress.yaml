@@ -1,0 +1,19 @@
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: client-ingress
+spec:
+  rules:
+  - host: arch.homework
+    http:
+      paths:
+      - path: /profile
+        pathType: Exact
+        backend:
+          serviceName: client-service
+          servicePort: 8000
+      - path: /user
+        pathType: Prefix
+        backend:
+          serviceName: client-service
+          servicePort: 8000

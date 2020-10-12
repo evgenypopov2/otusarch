@@ -1,0 +1,22 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: cacheservice-config-map
+data:
+  spring.datasource.url: "jdbc:postgresql://cacheservice-postgresql:5432/dbhealth"
+  spring.datasource.tomcat.validation-query: "SELECT 1"
+  spring.jpa.database-platform: "org.hibernate.dialect.PostgreSQLDialect"
+  spring.jpa.hibernate.ddl-auto: "update"
+  spring.jpa.properties.hibernate.jdbc.lob.non_contextual_creation: "true"
+  spring.cache.type: "none"
+  spring.cache.jcache.config: "classpath:ehcache.xml"
+  spring.cache.jcache.provider: "org.ehcache.jsr107.EhcacheCachingProvider"
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: cacheservice-secret
+type: Opaque
+data:
+  spring.datasource.username: cG9zdGdyZXM=
+  spring.datasource.password: cG9zdGdyZXM=

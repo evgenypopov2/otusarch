@@ -1,0 +1,26 @@
+replicaCount: 2
+
+image:
+  repository: otusarchitectpopov/hw01
+
+service:
+  type: NodePort
+  port: 9000
+
+postgresql:
+  enabled: true
+  postgresqlUsername: postgres
+  postgresqlPassword: postgres
+  postgresqlDatabase: dbhealth
+  service:
+    port: "5432"
+
+metrics:
+  serviceMonitor:
+    enabled: true
+  
+ingress:
+  enabled: true
+  hosts:
+    - host: arch.homework
+      paths: ["/"]

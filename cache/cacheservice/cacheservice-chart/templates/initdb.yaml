@@ -1,0 +1,73 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: "{{ .Release.Name }}"
+  labels:
+    app.kubernetes.io/managed-by: {{ .Release.Service | quote }}
+    app.kubernetes.io/instance: {{ .Release.Name | quote }}
+    app.kubernetes.io/version: {{ .Chart.AppVersion }}
+    helm.sh/chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+  annotations:
+    # This is what defines this resource as a hook. Without this line, the
+    # job is considered part of the release.
+    "helm.sh/hook": post-install
+    "helm.sh/hook-weight": "-5"
+    "helm.sh/hook-delete-policy": hook-succeeded
+spec:
+  template:
+    metadata:
+      name: "{{ .Release.Name }}"
+      labels:
+        app.kubernetes.io/managed-by: {{ .Release.Service | quote }}
+        app.kubernetes.io/instance: {{ .Release.Name | quote }}
+        helm.sh/chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    spec:
+      restartPolicy: Never
+      initContainers:
+        - name: check-db-ready
+          image: postgres:latest
+          env:
+            - name: POSTGRES_HOST
+              value: {{ include "postgresql.fullname" . | quote }}
+            - name: POSTGRES_PORT
+              value: {{ .Values.postgresql.service.port | quote }}
+          command:
+            - sh
+            - "-c"
+            - |
+              until pg_isready -h $POSTGRES_HOST  -p  $POSTGRES_PORT; 
+              do echo waiting for database; sleep 2; done;
+      containers:
+      - name: post-install-job
+        env:
+          - name: DATABASE_URI
+            value: {{ printf "postgresql://%s:%s@%s:%s/%s" .Values.postgresql.postgresqlUsername .Values.postgresql.postgresqlPassword (include "postgresql.fullname" .) .Values.postgresql.service.port .Values.postgresql.postgresqlDatabase  | quote }}
+        image: postgres:latest
+        command:
+          - sh
+          - "-c"
+          - |
+            psql $DATABASE_URI <<'EOF'
+              CREATE TABLE IF NOT EXISTS public.client (id bigint NOT NULL,email character varying(255),first_name character varying(255),last_name character varying(255),phone character varying(255));
+              ALTER TABLE public.client OWNER TO postgres;
+              ALTER TABLE public.client_id_seq OWNER TO postgres;
+              ALTER TABLE ONLY public.client ADD CONSTRAINT client_pkey PRIMARY KEY (id);
+              INSERT INTO public.client (id,first_name,last_name,email,phone) VALUES (1,'Jack', 'Bauer', 'jackbauer@company.com', '+00-090-234234');
+              INSERT INTO public.client (id,first_name,last_name,email,phone) VALUES (2,'Chloe', 'O''Brian', 'chloe@o.brian', '+090-2323-234234');
+              INSERT INTO public.client (id,first_name,last_name,email,phone) VALUES (3,'Kim', 'Bauer', 'kimbauer@some.ce', '+53-34-123123');
+              INSERT INTO public.client (id,first_name,last_name,email,phone) VALUES (4,'David', 'Palmer', 'davidpalmer@nothing.qa', '+23-234-1234234');
+              INSERT INTO public.client (id,first_name,last_name,email,phone) VALUES (5,'Michelle', 'Dessler', 'michelledessler@nowere.vb', '+2-234-23544');
+              INSERT INTO public.client (id,first_name,last_name,email,phone) VALUES (6,'Evgeniy', 'Popoff', 'egeny-popov@mail.ru', '+7-999-7654321');
+              INSERT INTO public.client (id,first_name,last_name,email,phone) VALUES (7,'Jack', 'Bauer', 'jackbauer@outlook.com', '+2-2308420948');
+              INSERT INTO public.client (id,first_name,last_name,email,phone) VALUES (8,'Kim', 'Bauer', 'kimbauer@mail.ru', '+5-20842040800');
+              INSERT INTO public.client (id,first_name,last_name,email,phone) VALUES (9,'Josh', 'Long', 'joshlong@rambler.ru', '+3-230842034');
+              INSERT INTO public.client (id,first_name,last_name,email,phone) VALUES (10,'Jeff', 'Dean', 'jeffdean@gmail.com', '+8-93875493847');
+              INSERT INTO public.client (id,first_name,last_name,email,phone) VALUES (11,'David', 'Palmer', 'davidpalmer@i-teco.ru', '+4-23984203423');
+              INSERT INTO public.client (id,first_name,last_name,email,phone) VALUES (12,'Michelle', 'Dessler', 'michelledessler@microsoft.com', '+0-198232398');
+              INSERT INTO public.client (id,first_name,last_name,email,phone) VALUES (13,'Chloe', 'O''Brian', 'chloeobrian@live.com', '+7-48203482034');
+              INSERT INTO public.client (id,first_name,last_name,email,phone) VALUES (14,'John', 'Woo', 'johnwoo@yahoo.com', '+1-43234234');
+              CREATE SEQUENCE public.client_id_seq START WITH 1 INCREMENT BY 1 NO MINVALUE NO MAXVALUE CACHE 1;
+              SELECT pg_catalog.setval('public.client_id_seq', 15, false);
+            EOF
+
+  backoffLimit: 0
